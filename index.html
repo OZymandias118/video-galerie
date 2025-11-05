@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video-Galerie</title>
 <style>
   body {
     margin: 0;
@@ -12,62 +13,56 @@
   }
 
   .video-gallery {
+    position: relative;
     max-width: 900px;
     margin: 0 auto;
-    position: relative;
-    padding: 16px;
+    padding: 1rem;
+    box-sizing: border-box;
   }
 
-  /* Dynamischer Video-Container */
+  /* Responsive Video-Wrapper */
   .video-container {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9; /* moderne Browser nutzen das für die Höhe */
+    height: auto;
     background: #000;
-    border-radius: 12px;
     overflow: hidden;
+    border-radius: 12px;
   }
 
-  /* Fallback für Browser ohne aspect-ratio */
-  @supports not (aspect-ratio: 16 / 9) {
-    .video-container {
-      height: 0;
-      padding-bottom: 56.25%; /* 16:9 fallback */
-    }
-    .video-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+  .video-container::before {
+    content: "";
+    display: block;
+    padding-top: 56.25%; /* 16:9 Standard */
   }
 
   iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    border: none;
+    border: 0;
   }
 
+  /* Navigationspfeile */
   .nav-button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
     border: none;
-    font-size: 30px;
-    padding: 15px 20px;
+    font-size: 2rem;
     cursor: pointer;
     z-index: 10;
-    transition: background 0.3s, transform 0.2s;
+    padding: 0.6rem 1rem;
     border-radius: 50%;
-    user-select: none;
+    transition: background 0.3s;
   }
 
   .nav-button:hover {
-    background: rgba(0, 0, 0, 0.8);
-    transform: translateY(-50%) scale(1.1);
+    background: rgba(0,0,0,0.8);
   }
 
   .nav-button.prev { left: 10px; }
@@ -76,48 +71,46 @@
   .video-title {
     text-align: center;
     margin-top: 12px;
-    font-size: 18px;
+    font-size: 1.1rem;
     font-weight: bold;
   }
 
   .video-counter {
     text-align: center;
-    margin-top: 6px;
+    font-size: 0.9rem;
     color: #aaa;
-    font-size: 14px;
+    margin-top: 4px;
   }
 
-  /* --- Tablet-Anpassung --- */
-  @media (max-width: 1024px) {
+  /* ========== MOBILE ANPASSUNG ========== */
+  @media (max-width: 768px) {
     .video-gallery {
-      padding: 10px;
-      max-width: 95%;
-    }
-  }
-
-  /* --- Handy-Anpassung --- */
-  @media (max-width: 600px) {
-    .video-gallery {
-      padding: 8px;
+      padding: 0.5rem;
+      max-width: 100%;
     }
 
-    .video-container {
-      aspect-ratio: 16 / 9;
-      border-radius: 8px;
+    .video-container::before {
+      padding-top: 60%; /* etwas höher für Tablets */
     }
 
     .nav-button {
-      font-size: 22px;
-      padding: 8px 12px;
+      font-size: 1.5rem;
+      padding: 0.4rem 0.8rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .video-container::before {
+      padding-top: 65%; /* etwas höher für Smartphones */
     }
 
-    .video-title {
-      font-size: 15px;
+    .nav-button {
+      font-size: 1.3rem;
+      padding: 0.3rem 0.6rem;
     }
 
-    .video-counter {
-      font-size: 13px;
-    }
+    .video-title { font-size: 1rem; }
+    .video-counter { font-size: 0.8rem; }
   }
 </style>
 </head>
@@ -126,13 +119,13 @@
 <div class="video-gallery" id="videoGallery">
   <button class="nav-button prev" onclick="changeVideo(-1)">&#8249;</button>
 
-  <div class="video-container" id="videoContainer">
+  <div class="video-container">
     <iframe id="videoPlayer"
-            src=""
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-            allowfullscreen
-            webkitallowfullscreen
-            mozallowfullscreen>
+      src=""
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+      allowfullscreen
+      webkitallowfullscreen
+      mozallowfullscreen>
     </iframe>
   </div>
 
@@ -143,57 +136,48 @@
 </div>
 
 <script>
-  const videos = [
-    { id: "YdhjsXNGYHo", title: "Hörprobe 1 - Titel" },
-    { id: "A_0OmooLyhw", title: "Hörprobe 2 - Titel" },
-    { id: "iN9yVvBYnME", title: "Hörprobe 3 - Titel" }
-  ];
+const videos = [
+  { id: "YdhjsXNGYHo", title: "Hörprobe 1 - Titel" },
+  { id: "A_0OmooLyhw", title: "Hörprobe 2 - Titel" },
+  { id: "iN9yVvBYnME", title: "Hörprobe 3 - Titel" }
+];
 
-  let currentVideo = 0;
+let currentVideo = 0;
 
-  function loadVideo(index) {
-    const player = document.getElementById('videoPlayer');
-    const title = document.getElementById('videoTitle');
-    const counter = document.getElementById('videoCounter');
+function loadVideo(i) {
+  const v = videos[i];
+  const iframe = document.getElementById("videoPlayer");
+  const title = document.getElementById("videoTitle");
+  const counter = document.getElementById("videoCounter");
 
-    player.src = `https://www.youtube.com/embed/${videos[index].id}?rel=0&modestbranding=1&playsinline=1`;
-    title.textContent = videos[index].title;
-    counter.textContent = `${index + 1} / ${videos.length}`;
-  }
+  iframe.src = `https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1&playsinline=1`;
+  title.textContent = v.title;
+  counter.textContent = `${i + 1} / ${videos.length}`;
+}
 
-  function changeVideo(direction) {
-    currentVideo += direction;
-    if (currentVideo >= videos.length) currentVideo = 0;
-    if (currentVideo < 0) currentVideo = videos.length - 1;
-    loadVideo(currentVideo);
-  }
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowLeft') changeVideo(-1);
-    if (e.key === 'ArrowRight') changeVideo(1);
-  });
-
-  /* === Touch-Unterstützung === */
-  let touchStartX = 0, touchEndX = 0;
-  const gallery = document.getElementById('videoGallery');
-
-  gallery.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-  });
-  gallery.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  });
-
-  function handleSwipe() {
-    const distance = touchEndX - touchStartX;
-    const threshold = 50;
-    if (Math.abs(distance) > threshold) {
-      distance > 0 ? changeVideo(-1) : changeVideo(1);
-    }
-  }
-
+function changeVideo(dir) {
+  currentVideo += dir;
+  if (currentVideo >= videos.length) currentVideo = 0;
+  if (currentVideo < 0) currentVideo = videos.length - 1;
   loadVideo(currentVideo);
+}
+
+/* Pfeilsteuerung mit Tastatur */
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") changeVideo(-1);
+  if (e.key === "ArrowRight") changeVideo(1);
+});
+
+/* Wischsteuerung (Touch) */
+let startX = 0;
+const gallery = document.getElementById("videoGallery");
+gallery.addEventListener("touchstart", e => startX = e.changedTouches[0].screenX);
+gallery.addEventListener("touchend", e => {
+  const diff = e.changedTouches[0].screenX - startX;
+  if (Math.abs(diff) > 50) changeVideo(diff > 0 ? -1 : 1);
+});
+
+loadVideo(currentVideo);
 </script>
 
 </body>
