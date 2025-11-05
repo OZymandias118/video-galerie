@@ -1,198 +1,199 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            font-family: system-ui, sans-serif;
-            background: #111;
-            color: #fff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: #111;
+    color: #fff;
+  }
 
-        .video-gallery {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            padding: 20px;
-        }
+  .video-gallery {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    padding: 16px;
+  }
 
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
-            background: #000;
-            border-radius: 10px;
-        }
+  /* Dynamischer Video-Container */
+  .video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; /* moderne Browser nutzen das für die Höhe */
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+  /* Fallback für Browser ohne aspect-ratio */
+  @supports not (aspect-ratio: 16 / 9) {
+    .video-container {
+      height: 0;
+      padding-bottom: 56.25%; /* 16:9 fallback */
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
 
-        .nav-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            font-size: 30px;
-            padding: 15px 20px;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 50%;
-            user-select: none;
-        }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
 
-        .nav-button:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: translateY(-50%) scale(1.1);
-        }
+  .nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 30px;
+    padding: 15px 20px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.3s, transform 0.2s;
+    border-radius: 50%;
+    user-select: none;
+  }
 
-        .nav-button.prev {
-            left: 10px;
-        }
+  .nav-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+  }
 
-        .nav-button.next {
-            right: 10px;
-        }
+  .nav-button.prev { left: 10px; }
+  .nav-button.next { right: 10px; }
 
-        .video-title {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+  .video-title {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-        .video-counter {
-            text-align: center;
-            margin-top: 10px;
-            color: #aaa;
-            font-size: 14px;
-        }
+  .video-counter {
+    text-align: center;
+    margin-top: 6px;
+    color: #aaa;
+    font-size: 14px;
+  }
 
-        /* --- Responsive Design --- */
-        @media (max-width: 768px) {
-            .video-gallery {
-                padding: 10px;
-            }
+  /* --- Tablet-Anpassung --- */
+  @media (max-width: 1024px) {
+    .video-gallery {
+      padding: 10px;
+      max-width: 95%;
+    }
+  }
 
-            .nav-button {
-                font-size: 24px;
-                padding: 10px 14px;
-            }
+  /* --- Handy-Anpassung --- */
+  @media (max-width: 600px) {
+    .video-gallery {
+      padding: 8px;
+    }
 
-            .video-title {
-                font-size: 16px;
-            }
-        }
+    .video-container {
+      aspect-ratio: 16 / 9;
+      border-radius: 8px;
+    }
 
-        @media (max-width: 480px) {
-            .nav-button {
-                font-size: 20px;
-                padding: 8px 12px;
-            }
+    .nav-button {
+      font-size: 22px;
+      padding: 8px 12px;
+    }
 
-            .video-title {
-                font-size: 15px;
-            }
+    .video-title {
+      font-size: 15px;
+    }
 
-            .video-counter {
-                font-size: 13px;
-            }
-        }
-    </style>
+    .video-counter {
+      font-size: 13px;
+    }
+  }
+</style>
 </head>
 <body>
 
 <div class="video-gallery" id="videoGallery">
-    <button class="nav-button prev" onclick="changeVideo(-1)">&#8249;</button>
+  <button class="nav-button prev" onclick="changeVideo(-1)">&#8249;</button>
 
-    <div class="video-container" id="videoContainer">
-        <iframe id="videoPlayer"
-                src=""
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-        </iframe>
-    </div>
+  <div class="video-container" id="videoContainer">
+    <iframe id="videoPlayer"
+            src=""
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen
+            webkitallowfullscreen
+            mozallowfullscreen>
+    </iframe>
+  </div>
 
-    <button class="nav-button next" onclick="changeVideo(1)">&#8250;</button>
+  <button class="nav-button next" onclick="changeVideo(1)">&#8250;</button>
 
-    <div class="video-title" id="videoTitle"></div>
-    <div class="video-counter" id="videoCounter"></div>
+  <div class="video-title" id="videoTitle"></div>
+  <div class="video-counter" id="videoCounter"></div>
 </div>
 
 <script>
-    // === Deine Videos ===
-    const videos = [
-        { id: "YdhjsXNGYHo", title: "Hörprobe 1 - Titel" },
-        { id: "A_0OmooLyhw", title: "Hörprobe 2 - Titel" },
-        { id: "iN9yVvBYnME", title: "Hörprobe 3 - Titel" }
-    ];
+  const videos = [
+    { id: "YdhjsXNGYHo", title: "Hörprobe 1 - Titel" },
+    { id: "A_0OmooLyhw", title: "Hörprobe 2 - Titel" },
+    { id: "iN9yVvBYnME", title: "Hörprobe 3 - Titel" }
+  ];
 
-    let currentVideo = 0;
+  let currentVideo = 0;
 
-    function loadVideo(index) {
-        const player = document.getElementById('videoPlayer');
-        const title = document.getElementById('videoTitle');
-        const counter = document.getElementById('videoCounter');
+  function loadVideo(index) {
+    const player = document.getElementById('videoPlayer');
+    const title = document.getElementById('videoTitle');
+    const counter = document.getElementById('videoCounter');
 
-        player.src = `https://www.youtube.com/embed/${videos[index].id}`;
-        title.textContent = videos[index].title;
-        counter.textContent = `${index + 1} / ${videos.length}`;
-    }
+    player.src = `https://www.youtube.com/embed/${videos[index].id}?rel=0&modestbranding=1&playsinline=1`;
+    title.textContent = videos[index].title;
+    counter.textContent = `${index + 1} / ${videos.length}`;
+  }
 
-    function changeVideo(direction) {
-        currentVideo += direction;
-        if (currentVideo >= videos.length) currentVideo = 0;
-        if (currentVideo < 0) currentVideo = videos.length - 1;
-        loadVideo(currentVideo);
-    }
-
-    // Tastatursteuerung
-    document.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft') changeVideo(-1);
-        if (e.key === 'ArrowRight') changeVideo(1);
-    });
-
-    // === Touch-Unterstützung (Wischen auf Handy/Tablet) ===
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    const gallery = document.getElementById('videoGallery');
-
-    gallery.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-
-    gallery.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        const swipeDistance = touchEndX - touchStartX;
-        const minSwipeDistance = 50; // Pixel, um als Swipe zu zählen
-
-        if (Math.abs(swipeDistance) > minSwipeDistance) {
-            if (swipeDistance > 0) {
-                changeVideo(-1); // nach rechts wischen → vorheriges Video
-            } else {
-                changeVideo(1); // nach links wischen → nächstes Video
-            }
-        }
-    }
-
-    // Erstes Video laden
+  function changeVideo(direction) {
+    currentVideo += direction;
+    if (currentVideo >= videos.length) currentVideo = 0;
+    if (currentVideo < 0) currentVideo = videos.length - 1;
     loadVideo(currentVideo);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') changeVideo(-1);
+    if (e.key === 'ArrowRight') changeVideo(1);
+  });
+
+  /* === Touch-Unterstützung === */
+  let touchStartX = 0, touchEndX = 0;
+  const gallery = document.getElementById('videoGallery');
+
+  gallery.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  gallery.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  });
+
+  function handleSwipe() {
+    const distance = touchEndX - touchStartX;
+    const threshold = 50;
+    if (Math.abs(distance) > threshold) {
+      distance > 0 ? changeVideo(-1) : changeVideo(1);
+    }
+  }
+
+  loadVideo(currentVideo);
 </script>
 
 </body>
