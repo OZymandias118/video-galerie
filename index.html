@@ -34,8 +34,6 @@
             width: 100%;
             height: 100%;
             border: none;
-            /* Wichtig für YouTube-Vollbild */
-            allowfullscreen: true;
         }
 
         .nav-button {
@@ -121,11 +119,8 @@
     <div class="video-container" id="videoContainer">
         <iframe id="videoPlayer"
                 src=""
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                allowfullscreen
-                webkitallowfullscreen
-                mozallowfullscreen>
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
         </iframe>
     </div>
 
@@ -150,7 +145,7 @@
         const title = document.getElementById('videoTitle');
         const counter = document.getElementById('videoCounter');
 
-        player.src = `https://www.youtube.com/embed/${videos[index].id}?rel=0&modestbranding=1&playsinline=1`;
+        player.src = `https://www.youtube.com/embed/${videos[index].id}`;
         title.textContent = videos[index].title;
         counter.textContent = `${index + 1} / ${videos.length}`;
     }
