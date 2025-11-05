@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .video-gallery {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding: 20px;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 30px;
+            padding: 15px 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.3s;
+            border-radius: 5px;
+        }
+
+        .nav-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .nav-button.prev {
+            left: 10px;
+        }
+
+        .nav-button.next {
+            right: 10px;
+        }
+
+        .video-title {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .video-counter {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .nav-button {
+                font-size: 20px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="video-gallery">
+    <button class="nav-button prev" onclick="changeVideo(-1)">&#8249;</button>
+
+    <div class="video-container">
+        <iframe id="videoPlayer"
+                src=""
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+        </iframe>
+    </div>
+
+    <button class="nav-button next" onclick="changeVideo(1)">&#8250;</button>
+
+    <div class="video-title" id="videoTitle"></div>
+    <div class="video-counter" id="videoCounter"></div>
+</div>
+
+<script>
+    // HIER DEINE VIDEOS EINFÜGEN
+    const videos = [
+        {
+            id: "YdhjsXNGYHo",
+            title: "Hörprobe 1 - Titel"
+        },
+        {
+            id: "A_0OmooLyhw",
+            title: "Hörprobe 2 - Titel"
+        },
+        {
+            id: "iN9yVvBYnME",
+            title: "Hörprobe 3 - Titel"
+        }
+    ];
+
+    let currentVideo = 0;
+
+    function loadVideo(index) {
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoTitle = document.getElementById('videoTitle');
+        const videoCounter = document.getElementById('videoCounter');
+
+        videoPlayer.src = `https://www.youtube.com/embed/${videos[index].id}`;
+        videoTitle.textContent = videos[index].title;
+        videoCounter.textContent = `${index + 1} / ${videos.length}`;
+    }
+
+    function changeVideo(direction) {
+        currentVideo += direction;
+
+        // Zurück zum Anfang/Ende wenn am Rand
+        if (currentVideo >= videos.length) {
+            currentVideo = 0;
+        } else if (currentVideo < 0) {
+            currentVideo = videos.length - 1;
+        }
+
+        loadVideo(currentVideo);
+    }
+
+    // Tastatur-Navigation (Optional)
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowLeft') {
+            changeVideo(-1);
+        } else if (event.key === 'ArrowRight') {
+            changeVideo(1);
+        }
+    });
+
+    // Erstes Video beim Laden anzeigen
+    loadVideo(currentVideo);
+</script>
+
+</body>
+</html> 
