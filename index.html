@@ -35,6 +35,7 @@
     display: block;
   }
 
+  /* Navigationspfeile */
   .nav-button {
     position: absolute;
     top: 50%;
@@ -57,18 +58,23 @@
   .nav-button.prev { left: 10px; }
   .nav-button.next { right: 10px; }
 
-  .video-title {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 1.1rem;
-    font-weight: bold;
+  @media (max-width: 768px) {
+    .video-gallery {
+      padding: 0.5rem;
+      max-width: 100%;
+    }
+
+    .nav-button {
+      font-size: 1.5rem;
+      padding: 0.4rem 0.8rem;
+    }
   }
 
-  .video-counter {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-top: 4px;
+  @media (max-width: 480px) {
+    .nav-button {
+      font-size: 1.3rem;
+      padding: 0.3rem 0.6rem;
+    }
   }
 </style>
 </head>
@@ -88,30 +94,21 @@
   </div>
 
   <button class="nav-button next" onclick="changeVideo(1)">&#8250;</button>
-
-  <div class="video-title" id="videoTitle"></div>
-  <div class="video-counter" id="videoCounter"></div>
 </div>
 
 <script>
 const videos = [
-  { id: "YdhjsXNGYHo", title: "Bonjour sourire" },
-  { id: "A_0OmooLyhw", title: "Fly me to the moon" },
-  { id: "iN9yVvBYnME", title: "Bei dir war es immer so schön" },
-  { id: "40H-8tuPRiE", title: "When you're smiling" }
+  { id: "YdhjsXNGYHo" },
+  { id: "A_0OmooLyhw" },
+  { id: "iN9yVvBYnME" },
+  { id: "40H-8tuPRiE" }
 ];
 
 let currentVideo = 0;
 
 function loadVideo(i) {
-  const v = videos[i];
   const iframe = document.getElementById("videoPlayer");
-  const title = document.getElementById("videoTitle");
-  const counter = document.getElementById("videoCounter");
-
-  iframe.src = `https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1&playsinline=1`;
-  title.textContent = v.title;
-  counter.textContent = `${i + 1} / ${videos.length}`;
+  iframe.src = `https://www.youtube.com/embed/${videos[i].id}?rel=0&modestbranding=1&playsinline=1`;
 }
 
 function changeVideo(dir) {
@@ -136,31 +133,29 @@ gallery.addEventListener("touchend", e => {
   if (Math.abs(diff) > 50) changeVideo(diff > 0 ? -1 : 1);
 });
 
-/* === Dynamische Höhenanpassung === */
+/* Dynamische Höhenanpassung */
 function adjustVideoHeight() {
   const container = document.getElementById("videoContainer");
   const width = container.offsetWidth;
   const aspectRatio = 16 / 9;
   let height = width / aspectRatio;
 
-  // Anpassung für Geräte:
   if (window.innerWidth <= 480) {
-    height = width / 1.7; // leicht höher auf Handy
+    height = width / 1.7; // Handy etwas höher
   } else if (window.innerWidth <= 1024) {
-    height = width / 1.8; // etwas höher auf Tablet
+    height = width / 1.8; // Tablet leicht höher
   }
 
   container.style.height = `${height}px`;
 }
 
-/* Beim Laden und bei Fenstergröße neu berechnen */
 window.addEventListener("load", adjustVideoHeight);
 window.addEventListener("resize", adjustVideoHeight);
 
-/* Start */
 loadVideo(currentVideo);
 adjustVideoHeight();
 </script>
 
 </body>
 </html>
+
